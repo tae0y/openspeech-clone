@@ -41,8 +41,10 @@ def hydra_main(configs: DictConfig) -> None:
 
     logger, num_devices = parse_configs(configs)
 
+    print(f"configs: {configs}")
     data_module = DATA_MODULE_REGISTRY[configs.dataset.dataset](configs)
     data_module.prepare_data()
+
     tokenizer = TOKENIZER_REGISTRY[configs.tokenizer.unit](configs)
 
     data_module.setup()

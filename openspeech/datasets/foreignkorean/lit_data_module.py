@@ -11,10 +11,11 @@ from openspeech.data.sampler import RandomSampler, SmartBatchingSampler
 from openspeech.datasets import register_data_module
 
 from openspeech.datasets.foreignkorean.character import generate_character_labels, generate_character_script
-from openspeech.datasets.foreignkorean.preprocess import preprocess, preprocess_test_data
+from openspeech.datasets.foreignkorean.preprocess import preprocess
 
+logger = logging.getLogger(__name__)
 
-@register_data_module("ksponspeech")
+@register_data_module("foreignkorean")
 class LightningForeignKoreanDataModule(pl.LightningDataModule):
     FOREIGNKOREAN_TRAIN_NUM = 16870 #98.5%
     FOREIGNKOREAN_VALID_NUM = 775   #0.5%
@@ -32,12 +33,14 @@ class LightningForeignKoreanDataModule(pl.LightningDataModule):
             self.configs.dataset.dataset_path, self.configs.dataset.preprocess_mode
         )
 
-        test_audio_paths, test_transcripts = preprocess_test_data(
-            self.configs.dataset.test_manifest_dir, self.configs.dataset.preprocess_mode
-        )
+        #test_audio_paths, test_transcripts = preprocess_test_data(
+        #    self.configs.dataset.test_manifest_dir, self.configs.dataset.preprocess_mode
+        #)
 
-        audio_paths = train_valid_audio_paths + test_audio_paths
-        transcripts = train_valid_transcripts + test_transcripts
+        audio_paths = train_valid_audio_paths #+ test_audio_paths
+        transcripts = train_valid_transcripts #+ test_transcripts
+        logger.info(f"audio_paths : {len(audio_paths)}")
+        logger.info(f"transcripts : {len(transcripts)}")
 
         if self.configs.tokenizer.unit == "foreignkorean_character":
             generate_character_labels(transcripts, self.configs.tokenizer.vocab_path)
@@ -62,12 +65,20 @@ class LightningForeignKoreanDataModule(pl.LightningDataModule):
 
 
     def prepare_data(self):
+        print('prepare_data started..')
+        #if not os.path.exists(self.configs.tokenizer.vocab_path):
+        #    self._generate_vocab(self.configs.dataset.dataset_path)
+
+        print(f"os.path.exists(self.configs.dataset.manifest_file_path) {os.path.exists(self.configs.dataset.manifest_file_path)}")
+        print(f"os.path.exists(self.configs.dataset.dataset_path) {os.path.exists(self.configs.dataset.dataset_path)}")
         if not os.path.exists(self.configs.dataset.manifest_file_path):
             self.logger.error("Cannot find Manifest file")
             if not os.path.exists(self.configs.dataset.dataset_path):
                 self.logger.error("Cannot find dataset path")
                 raise FileNotFoundError
             self._generate_manifest_files(self.configs.dataset.manifest_file_path)
+
+        print('prepare_data ended..')
     
     def setup(self, stage: Optional[str] = None) -> None:
         valid_end_idx = self.FOREIGNKOREAN_TRAIN_NUM + self.FOREIGNKOREAN_VALID_NUM

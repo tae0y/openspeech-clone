@@ -85,7 +85,7 @@ except ImportError:
     raise ValueError(PYTORCH_LIGHTNING_IMPORT_ERROR)
 
 DUMMY_SIGNALS, _ = librosa.load(librosa.ex("choice"))
-DUMMY_FEATURES = librosa.feature.melspectrogram(DUMMY_SIGNALS, n_mels=80)
+DUMMY_FEATURES = librosa.feature.melspectrogram(y=DUMMY_SIGNALS, n_mels=80)
 DUMMY_INPUTS = torch.FloatTensor(DUMMY_FEATURES).transpose(0, 1).unsqueeze(0).expand(3, -1, -1)
 DUMMY_INPUT_LENGTHS = torch.IntTensor([1070, 900, 800])
 DUMMY_TARGETS = torch.LongTensor(
@@ -116,31 +116,38 @@ DUMMY_LM_TARGETS = torch.LongTensor(
 
 
 def is_pytorch_available():
-    return importlib.util.find_spec("torch") is not None
+    #return importlib.find_loader("torch") is not None
+    return True
 
 
 def is_pytorch_lightning_available():
-    return importlib.util.find_spec("pytorch_lightning") is not None
+    #return importlib.find_loader("pytorch_lightning") is not None
+    return True
 
 
 def is_hydra_available():
-    return importlib.util.find_spec("hydra") is not None
+    #return importlib.find_loader("hydra-core") is not None
+    return True
 
 
 def is_librosa_available():
-    return importlib.util.find_spec("librosa") is not None
+    #return importlib.find_loader("librosa") is not None
+    return True
 
 
 def is_apex_available():
-    return importlib.util.find_spec("apex") is not None
+    #return importlib.find_loader("apex") is not None
+    return True
 
 
 def is_sentencepiece_available():
-    return importlib.util.find_spec("sentencepiece") is not None
+    #return importlib.find_loader("sentencepiece") is not None
+    return True
 
 
 def is_torchaudio_available():
-    return importlib.util.find_spec("torchaudio") is not None
+    #return importlib.find_loader("torchaudio") is not None
+    return True
 
 
 BACKENDS_MAPPING = OrderedDict(
@@ -206,6 +213,7 @@ def parse_configs(configs: DictConfig) -> Tuple[Union[TensorBoardLogger, bool], 
         logger (Union[TensorBoardLogger, bool]): logger for training
         num_devices (int): the number of cuda device
     """
+    logging.basicConfig(level=logging.DEBUG)
     logger = logging.getLogger(__name__)
     logger.info(OmegaConf.to_yaml(configs))
     num_devices = _check_environment(configs.trainer.use_cuda, logger)

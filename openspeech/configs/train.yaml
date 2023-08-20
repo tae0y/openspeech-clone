@@ -7,5 +7,5 @@ defaults:
   - criterion: null
   - lr_scheduler: null
   - model: null
-  - trainer: gpu
+  - trainer: cpu
   - tokenizer: null

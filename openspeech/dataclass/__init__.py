@@ -36,8 +36,10 @@ from .configurations import (
     LibriSpeechConfigs,
     LMConfigs,
     TPUResumeTrainerConfigs,
-    TPUTrainerConfigs,
+    TPUTrainerConfigs
 )
+
+from .configurations import ForeignKoreanConfigs
 
 OPENSPEECH_TRAIN_CONFIGS = [
     "audio",
@@ -66,6 +68,7 @@ DATASET_DATACLASS_REGISTRY = {
     "ksponspeech": KsponSpeechConfigs,
     "librispeech": LibriSpeechConfigs,
     "lm": LMConfigs,
+    "foreignkorean" : ForeignKoreanConfigs
 }
 TRAINER_DATACLASS_REGISTRY = {
     "cpu": CPUTrainerConfigs,

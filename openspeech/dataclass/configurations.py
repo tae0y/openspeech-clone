@@ -96,6 +96,25 @@ class KsponSpeechConfigs(OpenspeechDataclass):
         metadata={"help": "KsponSpeech preprocess mode {phonetic, spelling}"},
     )
 
+@dataclass
+class ForeignKoreanConfigs(OpenspeechDataclass):
+    """Configuration dataclass that common used"""
+
+    dataset: str = field(
+        default="foreignkorean", metadata={"help": "Select dataset for training (librispeech, ksponspeech, aishell, lm)"}
+    )
+    dataset_path: str = field(default=MISSING, metadata={"help": "Path of dataset"})
+    test_dataset_path: str = field(default=MISSING, metadata={"help": "Path of evaluation dataset"})
+    manifest_file_path: str = field(
+        default="../traindatasets/ksponspeech_manifest.txt", metadata={"help": "Path of manifest file"}
+    )
+    test_manifest_dir: str = field(
+        default="../traindatasets/KsponSpeech_scripts", metadata={"help": "Path of directory contains test manifest files"}
+    )
+    preprocess_mode: str = field(
+        default="chracter",
+        metadata={"help": "KsponSpeech preprocess mode (character)"},
+    )
 
 @dataclass
 class AIShellConfigs(OpenspeechDataclass):

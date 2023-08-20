@@ -1,4 +1,5 @@
 import csv
+import os
 from dataclasses import dataclass, field
 
 from omegaconf import DictConfig
@@ -14,7 +15,7 @@ class ForeignKoreanCharacterTokenizerConfigs(TokenizerConfigs):
     vocab_path: str = field(default="../../traindatasets/foreignkorean.csv", metadata={"help": "Path of vocabulary file."})
 
 
-@register_tokenizer("kspon_character", dataclass=ForeignKoreanCharacterTokenizerConfigs)
+@register_tokenizer("foreignkorean_character", dataclass=ForeignKoreanCharacterTokenizerConfigs)
 class ForeignKoreanCharacterTokenizer(Tokenizer):
     def __init__(self, configs: DictConfig):
         super(ForeignKoreanCharacterTokenizer, self).__init__()
