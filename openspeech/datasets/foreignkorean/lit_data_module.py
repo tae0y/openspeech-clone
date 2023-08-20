@@ -59,7 +59,7 @@ class LightningForeignKoreanDataModule(pl.LightningDataModule):
                 transcript = transcript.replace("\n", "")
 
                 audio_paths.append(audio_path)
-                transcripts.append(transcripts)
+                transcripts.append(transcript)
 
         return audio_paths, transcripts
 

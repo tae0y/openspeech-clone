@@ -71,5 +71,4 @@ def generate_character_script(audio_paths: list, transcripts: list, manifest_fil
     with open(manifest_file_path, "w") as f:
         for audio_path, transcript in zip(audio_paths, transcripts):
             char_id_transcript = sentence_to_target(transcript, char2id)
-            audio_path = audio_path.replace("txt", "pcm")
             f.write(f"{audio_path.strip()}\t{transcript}\t{char_id_transcript}\n")
