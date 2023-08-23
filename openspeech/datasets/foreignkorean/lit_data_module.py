@@ -1,6 +1,7 @@
 import logging
 import os
 from typing import Optional
+import math
 
 import pytorch_lightning as pl
 from omegaconf import DictConfig
@@ -17,9 +18,10 @@ logger = logging.getLogger(__name__)
 
 @register_data_module("foreignkorean")
 class LightningForeignKoreanDataModule(pl.LightningDataModule):
-    FOREIGNKOREAN_TRAIN_NUM = 152806 #98.5%
-    FOREIGNKOREAN_VALID_NUM = 775   #0.5%
-    FOREIGNKOREAN_TEST_NUM  = 1551   #1%
+    FOREIGNKOREAN_TOTAL_NUM = -1
+    FOREIGNKOREAN_TRAIN_NUM = -1 # 매니페스트파일 라인수 * 98.5%
+    FOREIGNKOREAN_VALID_NUM = -1 # 매니페스트파일 라인수 * 0.5%
+    FOREIGNKOREAN_TEST_NUM  = -1 # 매니페스트파일 라인수 * 1%
 
     def __init__(self, configs: DictConfig) -> None:
         super(LightningForeignKoreanDataModule, self).__init__()
@@ -61,14 +63,20 @@ class LightningForeignKoreanDataModule(pl.LightningDataModule):
                 audio_paths.append(audio_path)
                 transcripts.append(transcript)
 
+            # 데이터 개수를 동적으로 관리, 계산을 단순화하기 위해 모두 내림하고 나머지는 train셋에 추가
+            self.FOREIGNKOREAN_TOTAL_NUM = len(f.readlines())
+            self.FOREIGNKOREAN_TRAIN_NUM = math.floor(self.FOREIGNKOREAN_TOTAL_NUM * 0.985) # 매니페스트파일 라인수 * 98.5%
+            self.FOREIGNKOREAN_VALID_NUM = math.floor(self.FOREIGNKOREAN_TOTAL_NUM * 0.005) # 매니페스트파일 라인수 * 0.5%
+            self.FOREIGNKOREAN_TEST_NUM  = math.floor(self.FOREIGNKOREAN_TOTAL_NUM * 0.01 ) # 매니페스트파일 라인수 * 1%
+            self.FOREIGNKOREAN_TRAIN_NUM = self.FOREIGNKOREAN_TRAIN_NUM + math.floor(
+                self.FOREIGNKOREAN_TOTAL_NUM - (self.FOREIGNKOREAN_TRAIN_NUM + self.FOREIGNKOREAN_VALID_NUM + self.FOREIGNKOREAN_TEST_NUM)
+            )
+
         return audio_paths, transcripts
 
 
     def prepare_data(self):
         print('prepare_data started..')
-        #if not os.path.exists(self.configs.tokenizer.vocab_path):
-        #    self._generate_vocab(self.configs.dataset.dataset_path)
-
         print(f"os.path.exists(self.configs.dataset.manifest_file_path) {os.path.exists(self.configs.dataset.manifest_file_path)}")
         print(f"os.path.exists(self.configs.dataset.dataset_path) {os.path.exists(self.configs.dataset.dataset_path)}")
         if not os.path.exists(self.configs.dataset.manifest_file_path):

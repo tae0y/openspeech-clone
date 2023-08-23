@@ -13,5 +13,5 @@ trainer=cpu \
 trainer.accelerator=auto \
 trainer.max_epochs=1 \
 trainer.sampler=random \
-trainer.batch_size=2 \
+trainer.batch_size=8 \
 criterion=cross_entropy
