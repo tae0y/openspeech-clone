@@ -17,9 +17,9 @@ logger = logging.getLogger(__name__)
 
 @register_data_module("foreignkorean")
 class LightningForeignKoreanDataModule(pl.LightningDataModule):
-    FOREIGNKOREAN_TRAIN_NUM = 16870 #98.5%
+    FOREIGNKOREAN_TRAIN_NUM = 152806 #98.5%
     FOREIGNKOREAN_VALID_NUM = 775   #0.5%
-    FOREIGNKOREAN_TEST_NUM = 1745   #1%
+    FOREIGNKOREAN_TEST_NUM  = 1551   #1%
 
     def __init__(self, configs: DictConfig) -> None:
         super(LightningForeignKoreanDataModule, self).__init__()

@@ -33,15 +33,12 @@ def preprocess(dataset_path, mode="character"):
         if not os.path.isdir(path):
             continue
 
-        #insde subsubdir : list.txt, ~~~.json, ~~~~.csv
-        listpath = os.path.join(path, 'list.txt')
-        with open(listpath, 'r') as f:
-            filelist = f.readlines()
-            for filename in filelist:
-                if filename.strip().endswith(".json"):
-                    filepath = os.path.join(path, filename)
-                    label_paths.append(filepath)
-                    audio_paths.append(filepath.replace('label','audio').replace('.json','.wav'))
+        filelist = os.listdir(path)
+        for filename in filelist:
+            filepath = os.path.join(path, os.path.splitext(filename[0]), filename)
+            if os.path.exists(filepath):
+                label_paths.append(filepath)
+                audio_paths.append(filepath.replace('label','audio').replace('.json','.wav'))
     
     #do parallel
     logger.debug(f"label_paths num : {len(label_paths)}")

@@ -273,9 +273,9 @@ def get_pl_trainer(
     elif configs.trainer.name == "tpu":
         trainer = pl.Trainer(
             accelerator=configs.trainer.accelerator,
-            tpu_cores=configs.trainer.tpu_cores,
+            devices=configs.trainer.tpu_cores,
             accumulate_grad_batches=configs.trainer.accumulate_grad_batches,
-            auto_select_gpus=configs.trainer.auto_select_gpus,
+            #auto_select_gpus=configs.trainer.auto_select_gpus,
             check_val_every_n_epoch=configs.trainer.check_val_every_n_epoch,
             gradient_clip_val=configs.trainer.gradient_clip_val,
             logger=logger,
