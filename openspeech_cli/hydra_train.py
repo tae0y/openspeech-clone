@@ -33,6 +33,8 @@ from openspeech.models import MODEL_REGISTRY
 from openspeech.tokenizers import TOKENIZER_REGISTRY
 from openspeech.utils import get_pl_trainer, parse_configs
 
+from torch.profiler import profile, record_function
+
 
 @hydra.main(config_path=os.path.join("..", "openspeech", "configs"), config_name="train")
 def hydra_main(configs: DictConfig) -> None:
@@ -52,7 +54,19 @@ def hydra_main(configs: DictConfig) -> None:
     model = MODEL_REGISTRY[configs.model.model_name](configs=configs, tokenizer=tokenizer)
 
     trainer = get_pl_trainer(configs, num_devices, logger)
-    trainer.fit(model, data_module)
+    
+    #반복되는 OOM 이슈 해결을 위한 프로파일링
+    try:
+        with profile(record_shapes=True) as prof:
+            with record_function("model_training"):
+                trainer.fit(model, data_module)
+    except RuntimeError as e:
+        print("An error occurred during training:", str(e))
+        prof.export_chrome_trace("trace.json") # Save the profiling data to a file
+        print("Profiling data saved to trace.json")
+        return
+    print(prof.key_averages().table(sort_by="self_cpu_memory_usage", row_limit=10))
+                
     trainer.test(model, data_module)
 
 

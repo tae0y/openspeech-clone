@@ -34,10 +34,10 @@ def preprocess(dataset_path, mode="character"):
             continue
 
         filelist = os.listdir(path)
-        print(f"filelist >> {filelist}")
+        #print(f"filelist >> {filelist}")
         for filename in filelist:
             filepath = os.path.join(path, os.path.splitext(filename)[0], filename + '.json')
-            print(f"filepath >> {filepath}")
+            #print(f"filepath >> {filepath}")
             if os.path.exists(filepath):
                 label_paths.append(filepath)
                 audio_paths.append(filepath.replace('label','audio').replace('.json','.wav'))

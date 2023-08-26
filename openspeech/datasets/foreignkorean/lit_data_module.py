@@ -56,7 +56,8 @@ class LightningForeignKoreanDataModule(pl.LightningDataModule):
         transcripts = list()
 
         with open(self.configs.dataset.manifest_file_path, encoding=self.encoding) as f:
-            for idx, line in enumerate(f.readlines()):
+            files = f.readlines()
+            for idx, line in enumerate(files):
                 audio_path, korean_transcript, transcript = line.split("\t")
                 transcript = transcript.replace("\n", "")
 
@@ -64,13 +65,17 @@ class LightningForeignKoreanDataModule(pl.LightningDataModule):
                 transcripts.append(transcript)
 
             # 데이터 개수를 동적으로 관리, 계산을 단순화하기 위해 모두 내림하고 나머지는 train셋에 추가
-            self.FOREIGNKOREAN_TOTAL_NUM = len(f.readlines())
+            self.FOREIGNKOREAN_TOTAL_NUM = len(files)
             self.FOREIGNKOREAN_TRAIN_NUM = math.floor(self.FOREIGNKOREAN_TOTAL_NUM * 0.985) # 매니페스트파일 라인수 * 98.5%
             self.FOREIGNKOREAN_VALID_NUM = math.floor(self.FOREIGNKOREAN_TOTAL_NUM * 0.005) # 매니페스트파일 라인수 * 0.5%
             self.FOREIGNKOREAN_TEST_NUM  = math.floor(self.FOREIGNKOREAN_TOTAL_NUM * 0.01 ) # 매니페스트파일 라인수 * 1%
             self.FOREIGNKOREAN_TRAIN_NUM = self.FOREIGNKOREAN_TRAIN_NUM + math.floor(
                 self.FOREIGNKOREAN_TOTAL_NUM - (self.FOREIGNKOREAN_TRAIN_NUM + self.FOREIGNKOREAN_VALID_NUM + self.FOREIGNKOREAN_TEST_NUM)
             )
+            print("FOREIGNKOREAN_TOTAL_NUM: ",self.FOREIGNKOREAN_TOTAL_NUM)
+            print("FOREIGNKOREAN_TRAIN_NUM: ",self.FOREIGNKOREAN_TRAIN_NUM)
+            print("FOREIGNKOREAN_VALID_NUM: ",self.FOREIGNKOREAN_VALID_NUM)
+            print("FOREIGNKOREAN_TEST_NUM: " ,self.FOREIGNKOREAN_TEST_NUM)
 
         return audio_paths, transcripts
 
