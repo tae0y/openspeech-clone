@@ -57,7 +57,7 @@ def hydra_main(configs: DictConfig) -> None:
     
     #반복되는 OOM 이슈 해결을 위한 프로파일링
     try:
-        with profile(record_shapes=True) as prof:
+        with profile(record_shapes=True, profile_memory=True) as prof:
             with record_function("model_training"):
                 trainer.fit(model, data_module)
     except RuntimeError as e:
